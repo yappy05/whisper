@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   rabbitmq:
@@ -12,21 +12,27 @@ services:
     networks:
       - my-app
 
-
   api-gateway:
     build: ./api-gateway
     ports:
       - 3000:3000
     depends_on:
       - rabbitmq
+      - transcribe
     env_file:
       - .env
     networks:
       - my-app
 
+  transcribe:
+    build: ./transcribe
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq:5672/
+      - TRANSCRIBE_QUEUE=transcribe_queue
+    networks:
+      - my-app
+
 networks:
   my-app:
-
-
-
-

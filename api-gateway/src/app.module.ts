@@ -18,7 +18,9 @@ import { TRANSCRIBE_CLIENT } from './common/lib/constnts/constants';
         useFactory: (config: ConfigService) => ({
           transport: Transport.RMQ,
           options: {
-            urls: [config.getOrThrow<string>('RABBITMQ_URL')],
+            urls: [
+              config.get<string>('RABBITMQ_URL') ?? 'amqp://rabbitmq:5672/',
+            ],
             queue: 'transcribe_queue',
             queueOptions: {
               durable: true,

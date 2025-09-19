@@ -1,9 +1,15 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Inject } from '@nestjs/common';
 import { AppService } from './app.service';
+import { TRANSCRIBE_CLIENT } from './common/lib/constnts/constants';
+import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    @Inject(TRANSCRIBE_CLIENT) private readonly transcribeClient: ClientProxy,
+  ) {}
 
   @Get()
   getHello(): string {
@@ -11,5 +17,9 @@ export class AppController {
   }
 
   @Get('transcribe/health')
-  healthTranscribe() {}
+  healthTranscribe() {
+    return firstValueFrom(
+      this.transcribeClient.send('health_check', { message: 'check' }),
+    );
+  }
 }
