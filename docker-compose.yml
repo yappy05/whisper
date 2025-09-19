@@ -11,6 +11,12 @@ services:
       - 15672:15672
     networks:
       - my-app
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   api-gateway:
     build: ./api-gateway
@@ -18,21 +24,22 @@ services:
       - 3000:3000
     depends_on:
       - rabbitmq
-      - transcribe
     env_file:
       - .env
     networks:
       - my-app
 
-  transcribe:
+  transcribe-service:
     build: ./transcribe
+    ports:
+      - 8000:8000
     depends_on:
       - rabbitmq
-    environment:
-      - RABBITMQ_URL=amqp://rabbitmq:5672/
-      - TRANSCRIBE_QUEUE=transcribe_queue
+    env_file:
+      - .env
     networks:
       - my-app
+
 
 networks:
   my-app:

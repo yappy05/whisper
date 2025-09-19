@@ -19,7 +19,8 @@ import { TRANSCRIBE_CLIENT } from './common/lib/constnts/constants';
           transport: Transport.RMQ,
           options: {
             urls: [
-              config.get<string>('RABBITMQ_URL') ?? 'amqp://rabbitmq:5672/',
+              // config.get<string>('RABBITMQ_URL') ?? 'amqp://guest:rabbitmq:5672/',
+              config.getOrThrow<string>('RABBITMQ_URL'),
             ],
             queue: 'transcribe_queue',
             queueOptions: {
@@ -33,4 +34,5 @@ import { TRANSCRIBE_CLIENT } from './common/lib/constnts/constants';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+}
